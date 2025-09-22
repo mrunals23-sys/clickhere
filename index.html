@@ -71,7 +71,8 @@
     border-radius: 30px;
     cursor: pointer;
     transition: 0.3s;
-    position: absolute;
+    position: relative;
+    display: inline-block;
   }
 
   .yes {
@@ -90,6 +91,20 @@
   .no {
     background: #ddd;
     color: #333;
+  }
+
+  #finalBlock {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 600px) {
+    #finalBlock {
+      flex-direction: column;
+    }
   }
 
   .confetti {
@@ -130,7 +145,6 @@
     50% { transform:scale(1.2); }
   }
 
-  /* Floating Back to Top Button */
   #backToTop {
     position: fixed;
     bottom: 20px;
@@ -196,14 +210,30 @@ function showNext(id) {
   block.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
+// Safe No button movement
 const noBtn = document.getElementById('noBtn');
 function moveNo(button) {
-  const maxX = window.innerWidth - button.offsetWidth - 20;
-  const maxY = window.innerHeight - button.offsetHeight - 20;
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+  const btnWidth = button.offsetWidth;
+  const btnHeight = button.offsetHeight;
+  const yesBtn = document.querySelector(".yes");
+  const yesRect = yesBtn.getBoundingClientRect();
+  const maxX = window.innerWidth - btnWidth - 20;
+  const maxY = window.innerHeight - btnHeight - 20;
+  let x, y, attempts = 0;
+  
+  do {
+    x = Math.random() * maxX;
+    y = Math.random() * maxY;
+    attempts++;
+  } while (
+    x + btnWidth > yesRect.left - 10 && x < yesRect.right + 10 &&
+    y + btnHeight > yesRect.top - 10 && y < yesRect.bottom + 10 &&
+    attempts < 100
+  );
+
   button.style.left = `${x}px`;
   button.style.top = `${y}px`;
+  button.style.position = "absolute";
 }
 noBtn.addEventListener('mouseover', () => moveNo(noBtn));
 noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(noBtn); });
@@ -262,7 +292,6 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Show floating back-to-top button on scroll
 window.addEventListener("scroll", () => {
   const btn = document.getElementById("backToTop");
   if (window.scrollY > 200) {
