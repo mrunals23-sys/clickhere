@@ -14,6 +14,8 @@
     padding: 20px;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    position: relative;
+    min-height: 100vh;
   }
 
   @keyframes bgMove {
@@ -65,13 +67,11 @@
   /* Yes/No Buttons */
   .btn {
     padding: 12px 25px;
-    margin: 10px;
     font-size: 1rem;
     border: none;
     border-radius: 30px;
     cursor: pointer;
     transition: 0.3s;
-    position: relative;
     display: inline-block;
   }
 
@@ -93,18 +93,16 @@
     color: #333;
   }
 
+  /* Final buttons fixed bottom center */
   #finalBlock {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  @media (max-width: 600px) {
-    #finalBlock {
-      flex-direction: column;
-    }
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
   }
 
   .confetti {
@@ -194,8 +192,6 @@
 
 <!-- Final Block -->
 <div class="block" id="finalBlock">
-  <h2>So... 💖</h2>
-  <p>Can we date? 💕</p>
   <button class="btn yes" onclick="yesAnswer()">Yes 💖</button>
   <button class="btn no" id="noBtn">No 🙈</button>
 </div>
@@ -210,17 +206,18 @@ function showNext(id) {
   block.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-// Safe No button movement
+// No button safe movement above Yes
 const noBtn = document.getElementById('noBtn');
 function moveNo(button) {
   const btnWidth = button.offsetWidth;
   const btnHeight = button.offsetHeight;
   const yesBtn = document.querySelector(".yes");
   const yesRect = yesBtn.getBoundingClientRect();
+
   const maxX = window.innerWidth - btnWidth - 20;
-  const maxY = window.innerHeight - btnHeight - 20;
+  const maxY = yesRect.top - btnHeight - 10; // always above Yes
+
   let x, y, attempts = 0;
-  
   do {
     x = Math.random() * maxX;
     y = Math.random() * maxY;
@@ -294,11 +291,7 @@ function scrollToTop() {
 
 window.addEventListener("scroll", () => {
   const btn = document.getElementById("backToTop");
-  if (window.scrollY > 200) {
-    btn.style.display = "block";
-  } else {
-    btn.style.display = "none";
-  }
+  btn.style.display = window.scrollY > 200 ? "block" : "none";
 });
 </script>
 </body>
