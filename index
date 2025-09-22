@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Feelings 💌</title>
+<style>
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    background-size: 400% 400%;
+    animation: bgMove 15s linear infinite;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  @keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .block {
+    background: white;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 20px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease;
+    position: relative;
+  }
+
+  .block.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .block h2 {
+    color: #ff4b5c;
+    margin-bottom: 15px;
+  }
+
+  .arrow {
+    background: #ff4b5c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-top: 15px;
+    transition: 0.3s;
+  }
+
+  .arrow:hover {
+    background: #ff1e3c;
+  }
+
+  /* Yes/No Buttons */
+  .btn {
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    position: absolute;
+  }
+
+  .yes {
+    background: #ff4b5c;
+    color: white;
+    animation: heartbeatBtn 1.5s infinite;
+  }
+
+  @keyframes heartbeatBtn {
+    0%,100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1.2); }
+    75% { transform: scale(1.1); }
+  }
+
+  .no {
+    background: #ddd;
+    color: #333;
+  }
+
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0.9;
+    border-radius: 50%;
+    animation: fall 3s linear forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(600px) rotate(720deg); opacity:0; }
+  }
+
+  .final-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+    color: #ff1e3c;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255,0,100,0.8);
+    opacity: 0;
+    animation: popIn 1s forwards, heartbeat 1.5s infinite 1s;
+    z-index: 100;
+  }
+
+  @keyframes popIn {
+    0% { opacity:0; transform:translate(-50%, -50%) scale(0.5); }
+    100% { opacity:1; transform:translate(-50%, -50%) scale(1); }
+  }
+
+  @keyframes heartbeat {
+    0%,100% { transform:scale(1); }
+    50% { transform:scale(1.2); }
+  }
+
+  /* Floating Back to Top Button */
+  #backToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ff4b5c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: none;
+    z-index: 999;
+    transition: background 0.3s, transform 0.3s;
+  }
+
+  #backToTop:hover {
+    background: #ff1e3c;
+    transform: scale(1.1);
+  }
+</style>
+</head>
+<body>
+
+<!-- Block 1 -->
+<div class="block visible" id="block1">
+  <h2>From the moment I met you 💕</h2>
+  <p>I felt something really special...</p>
+  <button class="arrow" onclick="showNext('block2')">➡️</button>
+</div>
+
+<!-- Block 2 -->
+<div class="block" id="block2">
+  <h2>You make me smile 😍</h2>
+  <p>Every single day feels brighter with you.</p>
+  <button class="arrow" onclick="showNext('block3')">➡️</button>
+</div>
+
+<!-- Block 3 -->
+<div class="block" id="block3">
+  <h2>I admire you ✨</h2>
+  <p>Your kindness and laugh mean the world to me.</p>
+  <button class="arrow" onclick="showNext('finalBlock')">➡️</button>
+</div>
+
+<!-- Final Block -->
+<div class="block" id="finalBlock">
+  <h2>So... 💖</h2>
+  <p>Can we date? 💕</p>
+  <button class="btn yes" onclick="yesAnswer()">Yes 💖</button>
+  <button class="btn no" id="noBtn">No 🙈</button>
+</div>
+
+<!-- Floating Back to Top Button -->
+<button id="backToTop" onclick="scrollToTop()">⬆️</button>
+
+<script>
+function showNext(id) {
+  const block = document.getElementById(id);
+  block.classList.add('visible');
+  block.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+const noBtn = document.getElementById('noBtn');
+function moveNo(button) {
+  const maxX = window.innerWidth - button.offsetWidth - 20;
+  const maxY = window.innerHeight - button.offsetHeight - 20;
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+  button.style.left = `${x}px`;
+  button.style.top = `${y}px`;
+}
+noBtn.addEventListener('mouseover', () => moveNo(noBtn));
+noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(noBtn); });
+
+function yesAnswer() {
+  launchConfettiBlast(100);
+  showFinalMessage();
+  setInterval(() => launchConfettiFall(5), 400);
+}
+
+function launchConfettiBlast(amount) {
+  const centerX = window.innerWidth/2;
+  const centerY = window.innerHeight/2;
+  for(let i=0;i<amount;i++){
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+    confetti.style.left=centerX+'px';
+    confetti.style.top=centerY+'px';
+    document.body.appendChild(confetti);
+    const angle = Math.random()*2*Math.PI;
+    const distance = Math.random()*300;
+    const x = distance*Math.cos(angle);
+    const y = distance*Math.sin(angle);
+    confetti.style.transition='transform 1.5s ease-out, opacity 1.5s ease-out';
+    setTimeout(() => {
+      confetti.style.transform=`translate(${x}px,${y}px)`;
+      confetti.style.opacity=0;
+    }, 10);
+    setTimeout(() => confetti.remove(),1600);
+  }
+}
+
+function launchConfettiFall(amount){
+  for(let i=0;i<amount;i++){
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+    confetti.style.left=Math.random()*window.innerWidth+'px';
+    confetti.style.top='-10px';
+    document.body.appendChild(confetti);
+    const fallDuration=Math.random()*3+2;
+    confetti.style.animation=`fall ${fallDuration}s linear forwards`;
+    setTimeout(()=>confetti.remove(),fallDuration*1000);
+  }
+}
+
+function showFinalMessage(){
+  const msg=document.createElement("div");
+  msg.classList.add("final-message");
+  msg.textContent="He said YES! 💖";
+  document.body.appendChild(msg);
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Show floating back-to-top button on scroll
+window.addEventListener("scroll", () => {
+  const btn = document.getElementById("backToTop");
+  if (window.scrollY > 200) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+});
+</script>
+</body>
+</html>
